@@ -124,6 +124,7 @@
 
     <h1>Email Generated</h1>
     <p>You are being redirected.</p>
+    <a id="openEmail" class="handle" href="#">Tap to open email</a>
 
     <a class="handle" href="https://t.me/javid_shah_iran_bot">@javid_shah_iran_bot</a>
   </div>
@@ -131,39 +132,58 @@
 <script>
   const params = new URLSearchParams(window.location.search);
 
-  const to = params.get('to') || '';
-  const bcc = params.get('bcc') || '';
-  const subject = params.get('sub') || '';
-  const body = params.get('body') || '';
+  const to = params.get("to") || "";
+  const bcc = params.get("bcc") || "";
+  const subject = params.get("sub") || "";
+  const body = params.get("body") || "";
 
   const ua = navigator.userAgent.toLowerCase();
-  const isAndroid = ua.includes('android');
+  const isAndroid = ua.includes("android");
   const isIOS = /iphone|ipad|ipod/.test(ua);
-  const isMobile = isAndroid || isIOS;
 
-  const gmailUrl =
-    `https://mail.google.com/mail/?view=cm&fs=1` +
-    `&to=${encodeURIComponent(to)}` +
-    (bcc ? `&bcc=${encodeURIComponent(bcc)}` : '') +
-    `&su=${encodeURIComponent(subject)}` +
-    `&body=${encodeURIComponent(body)}`;
+  const enc = encodeURIComponent;
 
-  let mailto = `mailto:${encodeURIComponent(to)}`;
+  // ✅ Gmail App deep link (works when Gmail app is installed)
+  // Opens compose directly in Gmail app.
+  const gmailAppUrl =
+    `googlegmail://co?to=${enc(to)}` +
+    (bcc ? `&bcc=${enc(bcc)}` : "") +
+    (subject ? `&subject=${enc(subject)}` : "") +
+    (body ? `&body=${enc(body)}` : "");
+
+  // ✅ Mail app fallback
+  let mailto = `mailto:${enc(to)}`;
   const q = [];
-  if (bcc) q.push(`bcc=${encodeURIComponent(bcc)}`);
-  if (subject) q.push(`subject=${encodeURIComponent(subject)}`);
-  if (body) q.push(`body=${encodeURIComponent(body)}`);
-  if (q.length) mailto += `?${q.join('&')}`;
+  if (bcc) q.push(`bcc=${enc(bcc)}`);
+  if (subject) q.push(`subject=${enc(subject)}`);
+  if (body) q.push(`body=${enc(body)}`);
+  if (q.length) mailto += `?${q.join("&")}`;
 
-  // ✅ Decision:
-  // iOS -> Mail app
-  // Android -> Gmail web (better BCC survival)
-  // Desktop -> Gmail web (most predictable)
-  const primary = isIOS ? mailto : gmailUrl;
+  // ✅ Gmail web compose fallback (use /mail/u/0/ not workspace marketing)
+  const gmailWebUrl =
+    `https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1` +
+    `&to=${enc(to)}` +
+    (bcc ? `&bcc=${enc(bcc)}` : "") +
+    `&su=${enc(subject)}` +
+    `&body=${enc(body)}`;
+
+  // iOS: mailto is best (opens Mail app reliably)
+  // Android: try Gmail app first (avoids Telegram webview login/marketing pages)
+  const primary = isIOS ? mailto : (isAndroid ? gmailAppUrl : gmailWebUrl);
+
+  // Try primary
+  window.location.href = primary;
+
+  // Fallback chain (only matters if primary fails / is blocked)
+  setTimeout(() => {
+    // If Gmail app deep link failed (not installed), try mailto
+    if (isAndroid) window.location.href = mailto;
+  }, 800);
 
   setTimeout(() => {
-    window.location.href = primary;
-  }, 700);
+    // If mailto didn’t work / user has no mail client, try Gmail web
+    window.location.href = gmailWebUrl;
+  }, 500);
 </script>
 
 
