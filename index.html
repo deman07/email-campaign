@@ -1,11 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Email Redirect</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Verified</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+    /* Iran flag background */
+    background: linear-gradient(
+      to bottom,
+      #239f40 0%,
+      #239f40 33.33%,
+      #ffffff 33.33%,
+      #ffffff 66.66%,
+      #da0000 66.66%,
+      #da0000 100%
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card {
+    width: 90%;
+    max-width: 520px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+  }
+
+  .lion {
+    width: 120px;
+    margin-bottom: 25px;
+  }
+
+  .check {
+    width: 70px;
+    height: 70px;
+    background: #d5f2df;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1f9d50;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 25px;
+    color: #555;
+    font-size: 16px;
+  }
+
+  .handle {
+    margin-top: 30px;
+    font-size: 15px;
+    color: #0a58ff;
+    text-decoration: none;
+  }
+</style>
 </head>
 <body>
-Opening email…
+
+<div class="card">
+  <!-- Replace src with your actual image file -->
+  <img class="lion" src="lion.png" alt="Lion Emblem" />
+
+  <div class="check">✓</div>
+
+  <h1>Verified Successfully</h1>
+  <p>You are being redirected.</p>
+
+  <a class="handle" href="https://t.me/javid_shah_iran_bot">
+    @javid_shah_iran_bot
+  </a>
+</div>
+
 <script>
   const params = new URLSearchParams(window.location.search);
 
@@ -14,13 +101,18 @@ Opening email…
   const subject = params.get('sub') || '';
   const body = params.get('body') || '';
 
-  const mailto =
-    `mailto:${encodeURIComponent(to)}` +
-    `?bcc=${encodeURIComponent(bcc)}` +
-    `&subject=${encodeURIComponent(subject)}` +
+  const gmailUrl =
+    `https://mail.google.com/mail/?view=cm&fs=1` +
+    `&to=${encodeURIComponent(to)}` +
+    (bcc ? `&bcc=${encodeURIComponent(bcc)}` : '') +
+    `&su=${encodeURIComponent(subject)}` +
     `&body=${encodeURIComponent(body)}`;
 
-  window.location.href = mailto;
+  // Redirect after short delay (so user sees verification)
+  setTimeout(() => {
+    window.location.href = gmailUrl;
+  }, 1500);
 </script>
+
 </body>
 </html>
