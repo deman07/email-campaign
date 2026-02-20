@@ -139,6 +139,7 @@
   const ua = navigator.userAgent.toLowerCase();
   const isAndroid = ua.includes('android');
   const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isMobile = isAndroid || isIOS;
 
   const gmailUrl =
     `https://mail.google.com/mail/?view=cm&fs=1` +
@@ -154,12 +155,15 @@
   if (body) q.push(`body=${encodeURIComponent(body)}`);
   if (q.length) mailto += `?${q.join('&')}`;
 
-  // iOS: mailto works best (opens Mail app). Android: Gmail web tends to preserve BCC better.
-  const primary = (isAndroid && !isIOS) ? gmailUrl : mailto;
+  // ✅ Decision:
+  // iOS -> Mail app
+  // Android -> Gmail web (better BCC survival)
+  // Desktop -> Gmail web (most predictable)
+  const primary = isIOS ? mailto : gmailUrl;
 
   setTimeout(() => {
     window.location.href = primary;
-  }, 900);
+  }, 700);
 </script>
 
 
