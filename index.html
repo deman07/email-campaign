@@ -170,7 +170,7 @@
   // iOS: mailto is best (opens Mail app reliably)
   // Android: try Gmail app first (avoids Telegram webview login/marketing pages)
   const primary = isIOS ? mailto : (isAndroid ? gmailAppUrl : gmailWebUrl);
-
+  document.getElementById("openEmail").href = primary;
   // Try primary
   window.location.href = primary;
 
