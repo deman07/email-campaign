@@ -156,7 +156,6 @@
   @javid_shah_iran_bot
 </a>
   </div>
-
 <script>
   const params = new URLSearchParams(window.location.search);
 
@@ -171,15 +170,14 @@
 
   const enc = encodeURIComponent;
 
-  // ✅ Gmail App deep link (works when Gmail app is installed)
-  // Opens compose directly in Gmail app.
+  // Gmail App deep link (Android only)
   const gmailAppUrl =
     `googlegmail://co?to=${enc(to)}` +
     (bcc ? `&bcc=${enc(bcc)}` : "") +
     (subject ? `&subject=${enc(subject)}` : "") +
     (body ? `&body=${enc(body)}` : "");
 
-  // ✅ Mail app fallback
+  // Mail app
   let mailto = `mailto:${enc(to)}`;
   const q = [];
   if (bcc) q.push(`bcc=${enc(bcc)}`);
@@ -187,7 +185,7 @@
   if (body) q.push(`body=${enc(body)}`);
   if (q.length) mailto += `?${q.join("&")}`;
 
-  // ✅ Gmail web compose fallback (use /mail/u/0/ not workspace marketing)
+  // Gmail web (desktop only)
   const gmailWebUrl =
     `https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1` +
     `&to=${enc(to)}` +
@@ -195,25 +193,34 @@
     `&su=${enc(subject)}` +
     `&body=${enc(body)}`;
 
-  // iOS: mailto is best (opens Mail app reliably)
-  // Android: try Gmail app first (avoids Telegram webview login/marketing pages)
-  const primary = isIOS ? mailto : (isAndroid ? gmailAppUrl : gmailWebUrl);
-  document.getElementById("openEmail").href = primary;
-  // Try primary
-  window.location.href = primary;
+  // Decide primary behavior
+  let primary;
 
-  // Fallback chain (only matters if primary fails / is blocked)
-  setTimeout(() => {
-    // If Gmail app deep link failed (not installed), try mailto
-    if (isAndroid) window.location.href = mailto;
-  }, 800);
+  if (isIOS) {
+    primary = mailto;                 // iPhone: Mail app only
+  } else if (isAndroid) {
+    primary = gmailAppUrl;            // Android: Gmail app
+  } else {
+    primary = gmailWebUrl;            // Desktop: Gmail web
+  }
 
+  // Make button match primary action
+  const btn = document.getElementById("openEmail");
+  if (btn) btn.href = primary;
+
+  // Wait 1.5 seconds before redirect
   setTimeout(() => {
-    // If mailto didn’t work / user has no mail client, try Gmail web
-    window.location.href = gmailWebUrl;
-  }, 500);
+    window.location.href = primary;
+
+    // Android fallback only (if Gmail app not installed)
+    if (isAndroid) {
+      setTimeout(() => {
+        window.location.href = mailto;
+      }, 2500);
+    }
+
+  }, 1500);
 </script>
-
 
 </body>
 </html>
