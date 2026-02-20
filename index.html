@@ -105,6 +105,32 @@
     text-decoration:none;
     font-weight:600;
   }
+  .cta-btn{
+  display:inline-block;
+  margin-top: 18px;
+  padding: 12px 26px;
+  background: #0a58ff;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: clamp(14px, 3.2vw, 16px);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.cta-btn:hover{
+  background:#084cd6;
+  transform: translateY(-2px);
+}
+
+.telegram{
+  display:block;
+  margin-top: 22px;
+  font-size: clamp(13px, 3vw, 15px);
+  color:#0a58ff;
+  text-decoration:none;
+  font-weight:600;
+}
 
   /* Mobile-specific tightening so the card looks like your phone screenshot */
   @media (max-width: 420px){
@@ -124,9 +150,11 @@
 
     <h1>Email Generated</h1>
     <p>You are being redirected.</p>
-    <a id="openEmail" class="handle" href="#">Tap to open email</a>
+<a id="openEmail" class="cta-btn" href="#">Tap to open email</a>
 
-    <a class="handle" href="https://t.me/javid_shah_iran_bot">@javid_shah_iran_bot</a>
+<a class="telegram" href="https://t.me/javid_shah_iran_bot">
+  @javid_shah_iran_bot
+</a>
   </div>
 
 <script>
